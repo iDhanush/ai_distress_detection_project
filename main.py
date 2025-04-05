@@ -14,8 +14,8 @@ import uvicorn
 # --- Configuration ---
 # It's better practice to load these from environment variables or a config file,
 # but we'll keep them here for simplicity based on the original script.
-MODEL_LOAD_PATH = 'final_binary_distress_model.keras'
-SCALER_LOAD_PATH = 'final_data_scaler.joblib'
+MODEL_LOAD_PATH = 'models/distress_model.h5'
+SCALER_LOAD_PATH = 'models/final_data_scaler.joblib'
 
 # --- Global Variables for Model and Scaler ---
 # These will be loaded during startup
@@ -173,10 +173,10 @@ async def predict_audio(file: UploadFile = File(..., description="Audio file for
         prediction_proba = model.predict(reshaped_features)
         # The output is likely [[probability_of_class_1]] for binary classification
         distress_probability = float(prediction_proba[0][0]) # Ensure it's a standard float
-
+        print(distress_probability)
         # --- Interpret Prediction ---
-        predicted_class = (distress_probability > 0.5).astype(int)
-        label_map = {0: "No Distress", 1: "Distress"}
+        predicted_class = (distress_probability > 0.5)
+        label_map = {False: "No Distress", True: "Distress"}
         predicted_label = label_map[predicted_class]
 
         print(f"Prediction for {file.filename}: Label={predicted_label}, Probability={distress_probability:.4f}")
